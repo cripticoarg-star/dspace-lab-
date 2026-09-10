@@ -1,1 +1,42 @@
+version: "3.7"
+services:
+  dspacedb:
+    image: dspace/dspace-postgres-pgcrypto:dspace-7_x
+    container_name: dspacedb
+    environment:
+      PGDATA: /pgdata
+    volumes:
+      - dspacedb_data:/pgdata
+    ports:
+      - "5432:5432"
 
+  dspacesolr:
+    image: dspace/dspace-solr:dspace-7_x-solr8
+    container_name: dspacesolr
+    depends_on:
+      - dspacedb
+    volumes:
+      - dspacesolr_data:/var/solr/data
+    ports:
+      - "8983:8983"
+
+  dspace:
+    image: dspace/dspace:dspace-7_x
+    container_name: dspace
+    depends_on:
+      - dspacedb
+      - dspacesolr
+    environment:
+      db.url: jdbc:postgresql://dspacedb:5432/dspace
+      db.username: dspace
+      db.password: dspace
+      solr.server: http://dspacesolr:8983/solr
+    volumes:
+      - dspace_assetstore:/dspace/assetstore
+    ports:
+      - "8080:8080"
+
+volumes:
+  dspacedb_data:
+  dspacesolr_data:
+  dspace_assetstore:
