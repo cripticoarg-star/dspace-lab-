@@ -1,0 +1,41 @@
+services:
+  dspacedb:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+
+  dspacesolr:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+
+  dspace:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+    extra_hosts:
+      - "dspacedb:127.0.0.1"
+      - "dspacesolr:127.0.0.1"
+    environment:
+      db__P__url: jdbc:postgresql://localhost:5432/dspace
+      solr__P__server: http://localhost:8983/solr
+      dspace__P__server__P__ssr__P__url: http://localhost:8080/server
+      dspace__P__server__P__url: https://supreme-space-umbrella-wvx5p5x7v5x35xq9-8080.app.github.dev/server
+      dspace__P__ui__P__url: https://supreme-space-umbrella-wvx5p5x7v5x35xq9-4000.app.github.dev
+
+  dspace-angular:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+    extra_hosts:
+      - "dspace:127.0.0.1"
+      - "dspace-angular:127.0.0.1"
+    environment:
+      DSPACE_UI_SSL: "true"
+      DSPACE_UI_HOST: supreme-space-umbrella-wvx5p5x7v5x35xq9-4000.app.github.dev
+      DSPACE_UI_PORT: "443"
+      DSPACE_UI_BASEURL: https://supreme-space-umbrella-wvx5p5x7v5x35xq9-4000.app.github.dev
+      DSPACE_REST_SSL: "true"
+      DSPACE_REST_HOST: supreme-space-umbrella-wvx5p5x7v5x35xq9-8080.app.github.dev
+      DSPACE_REST_PORT: "443"
+      DSPACE_REST_NAMESPACE: /server
